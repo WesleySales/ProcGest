@@ -1,9 +1,11 @@
 package com.sales.procgest.controllers;
 
+import com.sales.procgest.DTO.EmailDTO;
 import com.sales.procgest.DTO.ProcuracaoDTO;
 import com.sales.procgest.entities.Procuracao;
 import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
+import com.sales.procgest.services.EmailService;
 import com.sales.procgest.services.ProcuracaoService;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -34,6 +36,9 @@ public class ProcuracaoController {
     @Autowired
     private ProcuracaoRepository procuracaoRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping("/upload")
     public ResponseEntity<?> uploadPdf(@RequestParam("file") MultipartFile file) throws IOException {
         if (!file.getOriginalFilename().endsWith(".pdf")) {
@@ -50,6 +55,7 @@ public class ProcuracaoController {
         System.out.println("\n"+data);
         if (data != null) {
             procuracaoRepository.save(data);
+            emailService.gerarEmailCadastroProcuracao(data);
             tempFile.delete();
         }
 
