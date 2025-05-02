@@ -9,11 +9,8 @@ label {
 }
 
 input, select {
-    width: 300px;
+    width: 500px;
     padding: 5px;
     margin-bottom: 10px;
 }
 
-.drop-zone{
-    background-color: green;
-}

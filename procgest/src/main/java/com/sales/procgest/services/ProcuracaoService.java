@@ -1,5 +1,6 @@
 package com.sales.procgest.services;
 
+import com.sales.procgest.DTO.EstatisticasDTO;
 import com.sales.procgest.entities.Procuracao;
 import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
@@ -7,6 +8,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -68,12 +70,12 @@ public class ProcuracaoService {
         return null;
     }
 
+    //Listar as procurações pendentes ordenadas da mais proxima do vencimento para a mais distante
     public List<Procuracao> listarProcuracoesPendentes(){
         var lista = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE);
         for(Procuracao p: lista){
             p.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), p.getDataVencimento()));
         }
-
         // retorna as procurações por ordem de vencimento (mais prox do vencimento aparece primeiro)
         return lista.stream()
                 .sorted(Comparator.comparing(Procuracao::getDataVencimento))
@@ -97,5 +99,19 @@ public class ProcuracaoService {
         return lista.stream()
                 .sorted(Comparator.comparing(Procuracao::getDataVencimento))
                 .collect(Collectors.toList());
+    }
+
+    public EstatisticasDTO buscarEstatisticas(){
+
+        LocalDate dataFim = LocalDate.now().plusDays(30);
+
+        int total = procuracaoRepository.findAll().size();
+        int pendentes = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE).size();
+        int expiradas = procuracaoRepository.findByStatus(StatusProcuracao.EXPIRADO).size();
+        int aVencer = procuracaoRepository.findByDataVencimentoBetween(LocalDate.now(),dataFim).size();
+
+        EstatisticasDTO estatisticas = new EstatisticasDTO(total,pendentes,expiradas,aVencer);
+
+        return estatisticas;
     }
 }

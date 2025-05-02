@@ -1,6 +1,8 @@
 package com.sales.procgest.controllers;
 
+import com.sales.procgest.DTO.EstatisticasDTO;
 import com.sales.procgest.DTO.ProcuracaoDTO;
+import com.sales.procgest.DTO.RelatorioDTO;
 import com.sales.procgest.entities.Procuracao;
 import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
@@ -60,9 +62,26 @@ public class ProcuracaoController {
         return ResponseEntity.ok().body(data);
     }
 
+//    @GetMapping
+//    public List<Procuracao> listarProcuracoes() {
+//        return procuracaoService.listarProcuracoesPendentes() ;
+//    }
+
+    @GetMapping("/estatisticas")
+    public ResponseEntity<EstatisticasDTO> exibirEstatisticas(){
+        var estatisticas = procuracaoService.buscarEstatisticas();
+        return ResponseEntity.ok().body(estatisticas);
+    }
+
     @GetMapping
-    public List<Procuracao> listarProcuracoes() {
-        return procuracaoService.listarProcuracoesPendentes() ;
+    public ResponseEntity<?> listarProcuracoes(){
+        List<Procuracao> lista = procuracaoService.listarProcuracoesPendentes();
+        String titulo = "RELATORIO DE PROCURACOES";
+        String desc = "Exibindo relatorio total de procurações";
+        int numeroProcuracoes = lista.size();
+
+        RelatorioDTO relatorioDTO = new RelatorioDTO(titulo,desc,numeroProcuracoes,lista);
+        return ResponseEntity.ok().body(relatorioDTO);
     }
 
     @PostMapping("/upload-multiplos")
@@ -97,9 +116,14 @@ public class ProcuracaoController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Procuracao>> buscarPorStatus(@PathVariable String status) {
+    public ResponseEntity<?> buscarPorStatus(@PathVariable String status) {
         List<Procuracao> lista = procuracaoRepository.findByStatus(StatusProcuracao.valueOf(status.toUpperCase()));
-        return ResponseEntity.ok().body(lista);
+        String titulo = "Relatorio - PROCURACOES POR STATUS: "+status.toUpperCase();
+        String desc = "Exibindo relatorio de procurações por status";
+        int numeroProcuracoes = lista.size();
+
+        RelatorioDTO relatorioDTO = new RelatorioDTO(titulo,desc,numeroProcuracoes,lista);
+        return ResponseEntity.ok().body(relatorioDTO);
     }
 
     @GetMapping(value = "/{id}")
