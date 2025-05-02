@@ -11,6 +11,7 @@ public record ProcuracaoDTO (
         String nomeProcurador,
         LocalDate dataInicio,
         LocalDate dataVencimento,
+        Long diasParaVencer,
         String status
 ){
 }

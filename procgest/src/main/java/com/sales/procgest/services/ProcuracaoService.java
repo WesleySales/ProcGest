@@ -6,14 +6,19 @@ import com.sales.procgest.repositories.ProcuracaoRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ProcuracaoService {
@@ -55,7 +60,6 @@ public class ProcuracaoService {
                 LocalDate vencimento = inicio.plusMonths(meses);
 
                 return new  Procuracao(nome, inicio, vencimento);
-//                return salvarProcuracao(procuracao);
             }
 
         } catch(IOException e){
@@ -64,13 +68,34 @@ public class ProcuracaoService {
         return null;
     }
 
+    public List<Procuracao> listarProcuracoesPendentes(){
+        var lista = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE);
+        for(Procuracao p: lista){
+            p.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), p.getDataVencimento()));
+        }
+
+        // retorna as procurações por ordem de vencimento (mais prox do vencimento aparece primeiro)
+        return lista.stream()
+                .sorted(Comparator.comparing(Procuracao::getDataVencimento))
+                .collect(Collectors.toList());
+    }
+
     private Procuracao salvarProcuracao(Procuracao procuracao){
         return procuracaoRepository.save(procuracao);
     }
 
-//    public void atualizarStatusProcuracao(Procuracao procuracao, String status){
-//        procuracao.setStatus(StatusProcuracao.valueOf(status.toUpperCase()));
-//    }
+    public List<Procuracao> gerarRelatorioVencimento(Long dias) {
+        LocalDate hoje = LocalDate.now();
+        LocalDate limite = hoje.plusDays(dias);
 
+        List<Procuracao> lista = procuracaoRepository.findByDataVencimentoBetween(hoje, limite);
+        for(Procuracao p: lista){
+            p.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), p.getDataVencimento()));
+        }
 
+        // ordenar por vencimento mais próximo
+        return lista.stream()
+                .sorted(Comparator.comparing(Procuracao::getDataVencimento))
+                .collect(Collectors.toList());
+    }
 }
