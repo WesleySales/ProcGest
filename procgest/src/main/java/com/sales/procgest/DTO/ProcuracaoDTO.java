@@ -7,7 +7,7 @@ import jakarta.persistence.Enumerated;
 import java.time.LocalDate;
 
 public record ProcuracaoDTO (
-        Long id,
+//        Long id,
         String nomeProcurador,
         LocalDate dataInicio,
         LocalDate dataVencimento,

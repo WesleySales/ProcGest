@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Procuração</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>Cadastro de Procuração</h1>
+
+<!-- Formulário principal de cadastro -->
+<form th:action="@{/procuracao/form}" th:object="${procuracao}" method="post">
+    <label>Nome do Procurador:</label>
+    <input type="text" th:field="*{nomeProcurador}" required><br>
+
+    <label>Data de Início:</label>
+    <input type="date" th:field="*{dataInicio}" required><br>
+
+    <label>Data de Vencimento:</label>
+    <input type="date" th:field="*{dataVencimento}" required><br>
+
+    <label>Status:</label>
+    <select th:field="*{status}">
+        <option value="PENDENTE">Pendente</option>
+        <option value="CONCLUIDO">Concluído</option>
+        <option value="EXPIRADO">Expirado</option>
+    </select><br><br>
+
+    <button type="submit">Cadastrar</button>
+</form>
+
+<!-- Exibição de mensagens -->
+<div th:if="${mensagem}">
+    <p th:text="${mensagem}"></p>
+</div>
+
+<!-- Formulário de upload de múltiplos PDFs -->
+<form method="POST" enctype="multipart/form-data" th:action="@{/procuracao/upload}">
+    <div id="drop-zone" style="border: 2px dashed #999; padding: 30px; text-align: center;">
+        <p id="drop-text">Arraste os PDFs aqui ou clique para selecionar</p>
+        <input type="file" name="files" id="file-input" accept="application/pdf" multiple style="display: none;" />
+    </div>
+    <button type="submit">Enviar</button>
+</form>
+
+<script src="/js/upload.js"></script>
+
+</body>
+</html>

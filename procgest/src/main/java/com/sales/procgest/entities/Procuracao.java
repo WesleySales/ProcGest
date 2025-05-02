@@ -10,6 +10,7 @@ public class Procuracao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     private String nomeProcurador;
@@ -63,5 +64,21 @@ public class Procuracao {
 
     public void setDiasParaVencer(Long diasParaVencer) {
         this.diasParaVencer = diasParaVencer;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNomeProcurador(String nomeProcurador) {
+        this.nomeProcurador = nomeProcurador;
+    }
+
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public void setDataVencimento(LocalDate dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 }
