@@ -14,7 +14,7 @@ public class EmailController {
     private EmailService emailService;
 
     @PostMapping("/enviar")
-    public ResponseEntity enviarEmail(@RequestBody EgmailDTO data) {
+    public ResponseEntity enviarEmail(@RequestBody EmailDTO data) {
         emailService.enviarEmailSimples(data.para(), data.assunto(), data.corpo());
         return ResponseEntity.ok().build();
     }

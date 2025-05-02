@@ -1,5 +1,6 @@
 package com.sales.procgest.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -14,6 +15,9 @@ public class Procuracao {
     private String nomeProcurador;
     private LocalDate dataInicio;
     private LocalDate dataVencimento;
+
+    @Transient
+    private Long diasParaVencer;
 
     @Enumerated(EnumType.STRING)
     private StatusProcuracao status;
@@ -51,5 +55,13 @@ public class Procuracao {
 
     public StatusProcuracao getStatus() {
         return status;
+    }
+
+    public Long getDiasParaVencer() {
+        return diasParaVencer;
+    }
+
+    public void setDiasParaVencer(Long diasParaVencer) {
+        this.diasParaVencer = diasParaVencer;
     }
 }

@@ -51,4 +51,14 @@ public class EmailService {
                         "Equipe Wesley Sales, A LENDA";
         enviarEmailSimples(para,assunto,corpo);
     }
+
+    public void gerarEmailVencimentos30D(Procuracao procuracao){
+        String para = "w.sales@ba.estudante.senai.br";
+        String assunto = "RELATORIO - VENCIMENTO NOS PROXIMOS 30 DIAS";
+//        long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento());
+        String corpo =
+                "Segue a lista de procurações que vencem nos proximos 30 dias: ";
+        enviarEmailSimples(para,assunto,corpo);
+    }
+
 }

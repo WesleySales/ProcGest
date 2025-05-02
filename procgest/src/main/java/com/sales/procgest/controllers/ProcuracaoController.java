@@ -1,14 +1,11 @@
 package com.sales.procgest.controllers;
 
-import com.sales.procgest.DTO.EmailDTO;
 import com.sales.procgest.DTO.ProcuracaoDTO;
 import com.sales.procgest.entities.Procuracao;
 import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
 import com.sales.procgest.services.EmailService;
 import com.sales.procgest.services.ProcuracaoService;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +16,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping(value = "/procuracoes")
@@ -68,7 +62,7 @@ public class ProcuracaoController {
 
     @GetMapping
     public List<Procuracao> listarProcuracoes() {
-        return procuracaoRepository.findAll();
+        return procuracaoService.listarProcuracoesPendentes() ;
     }
 
     @PostMapping("/upload-multiplos")
@@ -91,6 +85,7 @@ public class ProcuracaoController {
             if (procuracao != null) {
                 procuracoes.add(procuracao);
                 procuracaoRepository.save(procuracao);
+                emailService.gerarEmailCadastroProcuracao(procuracao);
             }
         }
 
@@ -101,9 +96,16 @@ public class ProcuracaoController {
         return ResponseEntity.ok(procuracoes);
     }
 
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Procuracao>> buscarPorStatus(@PathVariable String status) {
+        List<Procuracao> lista = procuracaoRepository.findByStatus(StatusProcuracao.valueOf(status.toUpperCase()));
+        return ResponseEntity.ok().body(lista);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<Procuracao> buscarProcuracaoPorId(@PathVariable Long id) {
         var procuracao = procuracaoRepository.findById(id).get();
+        procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
         return ResponseEntity.ok().body(procuracao);
     }
 
@@ -112,9 +114,17 @@ public class ProcuracaoController {
         var procuracao = procuracaoRepository.findById(id).get();
         String status = data.status().toUpperCase();
         procuracao.setStatus(StatusProcuracao.valueOf(status));
+        procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
         procuracaoRepository.save(procuracao);
 //        procuracaoService.atualizarStatusProcuracao(procuracao,status);
         return ResponseEntity.ok().body(procuracao);
+    }
+
+    //Esse endpoint espera um filtro em dias direto na URL, assim puxa a lista de procurações a vencer neste prazo
+    @GetMapping("/relatorio/vencimento/{dias}")
+    public ResponseEntity<List<Procuracao>> listarProcuracoesVencendo(@PathVariable Long dias) {
+        List<Procuracao> lista = procuracaoService.gerarRelatorioVencimento(dias);
+        return ResponseEntity.ok().body(lista);
     }
 
 }
