@@ -1,6 +1,8 @@
 package com.sales.procgest.services;
 
 import com.sales.procgest.DTO.EstatisticasDTO;
+import com.sales.procgest.DTO.ProcuracaoDTO;
+import com.sales.procgest.DTO.RelatorioDTO;
 import com.sales.procgest.entities.Procuracao;
 import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -71,33 +74,33 @@ public class ProcuracaoService {
     }
 
     //Listar as procurações pendentes ordenadas da mais proxima do vencimento para a mais distante
-    public List<Procuracao> listarProcuracoesPendentes(){
+    public List<ProcuracaoDTO> listarProcuracoesPendentes(){
         var lista = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE);
+        List<ProcuracaoDTO> listaDTO = new ArrayList<>();
         for(Procuracao p: lista){
-            p.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), p.getDataVencimento()));
+            var pDTO = getProcuracaoDTO(p);
+            listaDTO.add(pDTO);
         }
         // retorna as procurações por ordem de vencimento (mais prox do vencimento aparece primeiro)
-        return lista.stream()
-                .sorted(Comparator.comparing(Procuracao::getDataVencimento))
+        return listaDTO.stream()
+                .sorted(Comparator.comparing(ProcuracaoDTO::diasParaVencer))
                 .collect(Collectors.toList());
     }
 
-    private Procuracao salvarProcuracao(Procuracao procuracao){
-        return procuracaoRepository.save(procuracao);
-    }
-
-    public List<Procuracao> gerarRelatorioVencimento(Long dias) {
+    public List<ProcuracaoDTO> gerarRelatorioVencimento(Long dias) {
         LocalDate hoje = LocalDate.now();
         LocalDate limite = hoje.plusDays(dias);
 
         List<Procuracao> lista = procuracaoRepository.findByDataVencimentoBetween(hoje, limite);
-        for(Procuracao p: lista){
-            p.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), p.getDataVencimento()));
-        }
 
+        List<ProcuracaoDTO> listaDTO = new ArrayList<>();
+        for(Procuracao p: lista){
+            var pDTO = getProcuracaoDTO(p);
+            listaDTO.add(pDTO);
+        }
         // ordenar por vencimento mais próximo
-        return lista.stream()
-                .sorted(Comparator.comparing(Procuracao::getDataVencimento))
+        return listaDTO.stream()
+                .sorted(Comparator.comparing(ProcuracaoDTO::diasParaVencer))
                 .collect(Collectors.toList());
     }
 
@@ -114,4 +117,16 @@ public class ProcuracaoService {
 
         return estatisticas;
     }
+
+    //Funcao para transformar procuracao em procuracaoDTO
+    public ProcuracaoDTO getProcuracaoDTO(Procuracao procuracao){
+        String nomeProcurador = procuracao.getNomeProcurador();
+        String dataInicio = procuracao.getDataInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String dataVencimento = procuracao.getDataVencimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        Long diasParaVencer = ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento());
+        String status = procuracao.getStatus().name();
+
+        return new ProcuracaoDTO(nomeProcurador,dataInicio,dataVencimento,diasParaVencer,status);
+    }
+
 }

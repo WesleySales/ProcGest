@@ -8,6 +8,7 @@ import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
 import com.sales.procgest.services.EmailService;
 import com.sales.procgest.services.ProcuracaoService;
+import com.sales.procgest.services.RelatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,9 @@ public class ProcuracaoController {
 
     @Autowired
     private ProcuracaoRepository procuracaoRepository;
+
+    @Autowired
+    private RelatorioService relatorioService;
 
     @Autowired
     private EmailService emailService;
@@ -74,14 +78,8 @@ public class ProcuracaoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listarProcuracoes(){
-        List<Procuracao> lista = procuracaoService.listarProcuracoesPendentes();
-        String titulo = "RELATORIO DE PROCURACOES";
-        String desc = "Exibindo relatorio total de procurações";
-        int numeroProcuracoes = lista.size();
-
-        RelatorioDTO relatorioDTO = new RelatorioDTO(titulo,desc,numeroProcuracoes,lista);
-        return ResponseEntity.ok().body(relatorioDTO);
+    public ResponseEntity<?> exibirProcuracoes(){
+        return ResponseEntity.ok().body(relatorioService.gerarRelatorioGeral());
     }
 
     @PostMapping("/upload-multiplos")
@@ -115,15 +113,13 @@ public class ProcuracaoController {
         return ResponseEntity.ok(procuracoes);
     }
 
-    @GetMapping("/status/{status}")
-    public ResponseEntity<?> buscarPorStatus(@PathVariable String status) {
-        List<Procuracao> lista = procuracaoRepository.findByStatus(StatusProcuracao.valueOf(status.toUpperCase()));
-        String titulo = "Relatorio - PROCURACOES POR STATUS: "+status.toUpperCase();
-        String desc = "Exibindo relatorio de procurações por status";
-        int numeroProcuracoes = lista.size();
+    @PostMapping("/testePDF")
+    public ResponseEntity<?> testePdfEmail() {
+        List<ProcuracaoDTO> lista = procuracaoService.gerarRelatorioVencimento(30l);
+        String destinatario = "w.sales@ba.estudante.senai.br";
 
-        RelatorioDTO relatorioDTO = new RelatorioDTO(titulo,desc,numeroProcuracoes,lista);
-        return ResponseEntity.ok().body(relatorioDTO);
+        emailService.enviarRelatorioVencimentos30DPdf(lista,destinatario);
+        return ResponseEntity.ok().body("Email enviado com sucesso");
     }
 
     @GetMapping(value = "/{id}")
@@ -146,8 +142,8 @@ public class ProcuracaoController {
 
     //Esse endpoint espera um filtro em dias direto na URL, assim puxa a lista de procurações a vencer neste prazo
     @GetMapping("/relatorio/vencimento/{dias}")
-    public ResponseEntity<List<Procuracao>> listarProcuracoesVencendo(@PathVariable Long dias) {
-        List<Procuracao> lista = procuracaoService.gerarRelatorioVencimento(dias);
+    public ResponseEntity<?> listarProcuracoesVencendo(@PathVariable Long dias) {
+        List<ProcuracaoDTO> lista = procuracaoService.gerarRelatorioVencimento(dias);
         return ResponseEntity.ok().body(lista);
     }
 

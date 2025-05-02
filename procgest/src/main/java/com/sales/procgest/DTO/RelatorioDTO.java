@@ -13,7 +13,7 @@ public record RelatorioDTO(
         int totalProcuracoes,
 
         @JsonProperty("Lista de Procurações")
-        List<Procuracao> listaDeProcuracoes
+        List<ProcuracaoDTO> listaDeProcuracoes
 ) {
     public RelatorioDTO {
     }
@@ -34,7 +34,7 @@ public record RelatorioDTO(
     }
 
     @Override
-    public List<Procuracao> listaDeProcuracoes() {
+    public List<ProcuracaoDTO> listaDeProcuracoes() {
         return listaDeProcuracoes;
     }
 }

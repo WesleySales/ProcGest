@@ -9,9 +9,13 @@ import java.time.LocalDate;
 public record ProcuracaoDTO (
 //        Long id,
         String nomeProcurador,
-        LocalDate dataInicio,
-        LocalDate dataVencimento,
+        String dataInicio,
+        String dataVencimento,
         Long diasParaVencer,
         String status
 ){
+    @Override
+    public Long diasParaVencer() {
+        return diasParaVencer;
+    }
 }
