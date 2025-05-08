@@ -73,7 +73,6 @@ public class ProcuracaoService {
         return null;
     }
 
-    //Listar as procurações pendentes ordenadas da mais proxima do vencimento para a mais distante
     public List<ProcuracaoDTO> listarProcuracoesPendentes(){
         var lista = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE);
         List<ProcuracaoDTO> listaDTO = new ArrayList<>();
@@ -81,7 +80,7 @@ public class ProcuracaoService {
             var pDTO = getProcuracaoDTO(p);
             listaDTO.add(pDTO);
         }
-        // retorna as procurações por ordem de vencimento (mais prox do vencimento aparece primeiro)
+
         return listaDTO.stream()
                 .sorted(Comparator.comparing(ProcuracaoDTO::diasParaVencer))
                 .collect(Collectors.toList());
@@ -107,11 +106,29 @@ public class ProcuracaoService {
     public EstatisticasDTO buscarEstatisticas(){
 
         LocalDate dataFim = LocalDate.now().plusDays(30);
+        List<Procuracao> listaRecuperada = procuracaoRepository.findAll();
 
-        int total = procuracaoRepository.findAll().size();
-        int pendentes = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE).size();
-        int expiradas = procuracaoRepository.findByStatus(StatusProcuracao.EXPIRADO).size();
-        int aVencer = procuracaoRepository.findByDataVencimentoBetween(LocalDate.now(),dataFim).size();
+        int total = listaRecuperada.size();
+        int pendentes = (int) listaRecuperada.stream()
+                .filter(p -> p.getStatus() == StatusProcuracao.PENDENTE)
+                .count();
+        int expiradas = (int) listaRecuperada.stream()
+                .filter(p -> p.getStatus() == StatusProcuracao.EXPIRADO)
+                .count();
+        int aVencer = (int) listaRecuperada.stream()
+                .filter(p -> {
+                    LocalDate vencimento = p.getDataVencimento();
+                    return vencimento != null &&
+                            !vencimento.isBefore(LocalDate.now()) &&
+                            !vencimento.isAfter(dataFim);
+                })
+                .count();
+
+
+//        int total = procuracaoRepository.findAll().size();
+//        int pendentes = procuracaoRepository.findByStatus(StatusProcuracao.PENDENTE).size();
+//        int expiradas = procuracaoRepository.findByStatus(StatusProcuracao.EXPIRADO).size();
+//        int aVencer = procuracaoRepository.findByDataVencimentoBetween(LocalDate.now(),dataFim).size();
 
         EstatisticasDTO estatisticas = new EstatisticasDTO(total,pendentes,expiradas,aVencer);
 
@@ -128,5 +145,7 @@ public class ProcuracaoService {
 
         return new ProcuracaoDTO(nomeProcurador,dataInicio,dataVencimento,diasParaVencer,status);
     }
+
+
 
 }
