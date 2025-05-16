@@ -2,15 +2,12 @@ package com.sales.procgest.services;
 
 import com.sales.procgest.DTO.EstatisticasDTO;
 import com.sales.procgest.DTO.ProcuracaoDTO;
-import com.sales.procgest.DTO.RelatorioDTO;
 import com.sales.procgest.entities.Procuracao;
 import com.sales.procgest.entities.StatusProcuracao;
 import com.sales.procgest.repositories.ProcuracaoRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -86,6 +83,19 @@ public class ProcuracaoService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProcuracaoDTO> listarProcuracoes(){
+        var lista = procuracaoRepository.findAll();
+        List<ProcuracaoDTO> listaDTO = new ArrayList<>();
+        for(Procuracao p: lista){
+            var pDTO = getProcuracaoDTO(p);
+            listaDTO.add(pDTO);
+        }
+
+        return listaDTO.stream()
+                .sorted(Comparator.comparing(ProcuracaoDTO::diasParaVencer))
+                .collect(Collectors.toList());
+    }
+
     public List<ProcuracaoDTO> gerarRelatorioVencimento(Long dias) {
         LocalDate hoje = LocalDate.now();
         LocalDate limite = hoje.plusDays(dias);
@@ -104,7 +114,6 @@ public class ProcuracaoService {
     }
 
     public EstatisticasDTO buscarEstatisticas(){
-
         LocalDate dataFim = LocalDate.now().plusDays(30);
         List<Procuracao> listaRecuperada = procuracaoRepository.findAll();
 

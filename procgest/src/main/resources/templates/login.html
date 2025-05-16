@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Procuracoes</title>
+</head>
+<body>
+<h2>BEM VINDO AO PROCGEST</h2>
+<h3>O melhor gestor de procurações do mercado</h3>
+<form id="loginForm">
+    <label for="login">Login</label><br>
+    <input type="text" id="login" name="login" required><br><br>
+
+    <label for="senha">Senha</label><br>
+    <input type="password" id="senha" name="senha" required><br><br>
+
+    <button type="submit">ENTRAR</button>
+</form>
+
+<p id="mensagem"></p>
+
+<script>
+    const form = document.getElementById('loginForm');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const login = document.getElementById('login').value;
+    const senha = document.getElementById('senha').value;
+
+    try {
+        const response = await fetch('http://localhost:8080/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ login, senha }) // nomes compatíveis com UsuarioDTO
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem("token", data.token);
+            alert("Deu certo o login. token: "+data.token)
+            mensagem.textContent = localStorage.getItem('token');
+            // redirecionar para outra página
+            window.location.href = "/procuracao/form"; // ajuste o nome conforme seu arquivo HTML
+        } else {
+            alert("Login inválido");
+        }
+
+        } catch (error) {
+            console.error(error);
+            mensagem.textContent = "Erro ao conectar com o servidor.";
+        }
+    });
+</script>
+</body>
+</html>

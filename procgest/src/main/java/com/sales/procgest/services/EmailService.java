@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.stringtemplate.v4.ST;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -36,7 +37,7 @@ public class EmailService {
     @Autowired
     private Environment env;
 
-    private void enviarEmailSimples(String para, String assunto, String corpo) {
+    public void enviarEmailSimples(String para, String assunto, String corpo) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(para);
         message.setSubject(assunto);
@@ -74,7 +75,6 @@ public class EmailService {
 //    }
 
     public void enviarRelatorioVencimentos30DPdf(List<ProcuracaoDTO> proximas, String destinatario) {
-
         try {
             byte[] pdf = geradorPDF.gerarRelatorioProcuracoes(proximas);
             MimeMessage message = mailSender.createMimeMessage();

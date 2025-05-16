@@ -9,19 +9,24 @@ import com.sales.procgest.repositories.ProcuracaoRepository;
 import com.sales.procgest.services.EmailService;
 import com.sales.procgest.services.ProcuracaoService;
 import com.sales.procgest.services.RelatorioService;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/procuracoes")
@@ -102,7 +107,6 @@ public class ProcuracaoController {
             if (procuracao != null) {
                 procuracoes.add(procuracao);
                 procuracaoRepository.save(procuracao);
-                emailService.gerarEmailCadastroProcuracao(procuracao);
             }
         }
 
@@ -123,21 +127,39 @@ public class ProcuracaoController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Procuracao> buscarProcuracaoPorId(@PathVariable Long id) {
-        var procuracao = procuracaoRepository.findById(id).get();
-        procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
-        return ResponseEntity.ok().body(procuracao);
+    public ResponseEntity<?> buscarProcuracaoPorId(@PathVariable Long id) {
+        try{
+            Optional<Procuracao> procuracaoOptional = procuracaoRepository.findById(id); //o Optional aceita null
+
+            if(procuracaoOptional.isEmpty()) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
+
+            var procuracao = procuracaoOptional.get();
+            procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
+            return ResponseEntity.ok().body(procuracao);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Error: " + e.getMessage());
+        }
+
+
     }
 
     @PostMapping(value = "/{id}/attStatus")
-    public ResponseEntity<Procuracao> atualizarStatus(@PathVariable Long id, @RequestBody ProcuracaoDTO data){
+    public ResponseEntity<?> atualizarStatus(@PathVariable Long id, @RequestBody ProcuracaoDTO data){
         var procuracao = procuracaoRepository.findById(id).get();
-        String status = data.status().toUpperCase();
-        procuracao.setStatus(StatusProcuracao.valueOf(status));
-        procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
-        procuracaoRepository.save(procuracao);
-//        procuracaoService.atualizarStatusProcuracao(procuracao,status);
-        return ResponseEntity.ok().body(procuracao);
+        if(procuracao==null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
+
+        try{
+            String status = data.status().toUpperCase();
+            procuracao.setStatus(StatusProcuracao.valueOf(status));
+            procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
+            procuracaoRepository.save(procuracao);
+    //        procuracaoService.atualizarStatusProcuracao(procuracao,status);
+            return ResponseEntity.status(200).body("O status da procuração foi atualizado com sucesso!");
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body("Error: "+e.getMessage());
+        }
     }
 
     //Esse endpoint espera um filtro em dias direto na URL, assim puxa a lista de procurações a vencer neste prazo
