@@ -129,33 +129,21 @@ public class ProcuracaoController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> buscarProcuracaoPorId(@PathVariable Long id) {
         try{
-            Optional<Procuracao> procuracaoOptional = procuracaoRepository.findById(id); //o Optional aceita null
-
-            if(procuracaoOptional.isEmpty()) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
-
-            var procuracao = procuracaoOptional.get();
-            procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
-            return ResponseEntity.ok().body(procuracao);
-
+            var proc = procuracaoService.buscarPorId(id);
+            if(proc == null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
+            return ResponseEntity.ok().body(proc);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body("Error: " + e.getMessage());
         }
-
-
     }
 
     @PostMapping(value = "/{id}/attStatus")
     public ResponseEntity<?> atualizarStatus(@PathVariable Long id, @RequestBody ProcuracaoDTO data){
-        var procuracao = procuracaoRepository.findById(id).get();
-        if(procuracao==null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
-
         try{
-            String status = data.status().toUpperCase();
-            procuracao.setStatus(StatusProcuracao.valueOf(status));
-            procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
-            procuracaoRepository.save(procuracao);
-    //        procuracaoService.atualizarStatusProcuracao(procuracao,status);
+            var proc = procuracaoService.buscarPorId(id);
+            if(proc == null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
+            procuracaoService.atualizarStatusProcuracao(proc, data.status());
             return ResponseEntity.status(200).body("O status da procuração foi atualizado com sucesso!");
         }catch (Exception e){
             return ResponseEntity.internalServerError().body("Error: "+e.getMessage());

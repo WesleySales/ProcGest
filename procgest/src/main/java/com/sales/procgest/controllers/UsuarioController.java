@@ -6,6 +6,7 @@ import com.sales.procgest.DTO.UsuarioDTO;
 import com.sales.procgest.entities.Usuario;
 import com.sales.procgest.infra.services.TokenService;
 import com.sales.procgest.repositories.UsuarioRepository;
+import com.sales.procgest.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +22,19 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository ;
+    private UsuarioService usuarioService ;
 
     @PostMapping("/cadastro")
     public ResponseEntity<?> cadastro(@RequestBody @Valid CadastroDTO data){
-        if(this.usuarioRepository.findByLogin(data.login())!=null) return ResponseEntity.badRequest()
-                .body("Esse login não está disponível, tente novamente.");
-
-        String senhaCriptografada = new BCryptPasswordEncoder().encode(data.senha());
-        var user = new Usuario(data.login(), senhaCriptografada, data.role());
+        if(usuarioService.buscarPorLogin(data.login())) return ResponseEntity.badRequest()
+                .body("Já existe um usuario com este login. Altere e tente novamente");
 
         try {
-            usuarioRepository.save(user);
+            usuarioService.cadastrarUsuario(data);
             return ResponseEntity.status(201).body("Usuário cadastrado com sucesso!");
         } catch (Exception e) {
-            System.err.println("Erro ao criar procuração: " + e.getMessage());
-            return ResponseEntity.internalServerError()
-                    .body("Erro ao cadastrar o usuário. Tente novamente.");
+            return ResponseEntity.internalServerError().body("Erro ao cadastrar o usuário. Tente novamente.");
         }
-
     }
 
 }
