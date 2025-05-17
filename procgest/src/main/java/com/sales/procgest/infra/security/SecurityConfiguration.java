@@ -34,7 +34,6 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/procuracoes/{id}").authenticated()
                         .requestMatchers(HttpMethod.GET,"/procuracoes").authenticated()
 
-
                         .requestMatchers("procuracao/form").authenticated()
 
                         .requestMatchers("/usuarios/*").permitAll()

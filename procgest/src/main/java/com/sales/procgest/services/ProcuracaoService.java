@@ -9,8 +9,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,6 +31,7 @@ public class ProcuracaoService {
     @Autowired
     private ProcuracaoRepository procuracaoRepository;
 
+    //funcao que lê o pdf e extrai os dados relevantes para criar a procuracao
     public Procuracao extrairDadosPdf(File file) {
         try(PDDocument document = PDDocument.load(file)) {
             PDFTextStripper stripper = new PDFTextStripper();
@@ -69,6 +72,35 @@ public class ProcuracaoService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Procuracao> processarVariosPdfs(MultipartFile[] files) throws IOException {
+        List<Procuracao> procuracoes = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (isPdf(file)){
+                continue;
+            }
+
+            File tempFile = File.createTempFile("procuracao", ".pdf");
+            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                fos.write(file.getBytes());
+            }
+
+            Procuracao procuracao = extrairDadosPdf(tempFile);
+            tempFile.delete();
+
+            if (procuracao != null) {
+                procuracoes.add(procuracao);
+                procuracaoRepository.save(procuracao);
+            }
+        }
+        return procuracoes;
+    }
+
+    //conferir se é um arquivo pdf
+    private boolean isPdf(MultipartFile file) {
+        return !file.getOriginalFilename().endsWith(".pdf");
     }
 
     public List<ProcuracaoDTO> listarProcuracoesPendentes(){
@@ -179,7 +211,6 @@ public class ProcuracaoService {
 
         return new ProcuracaoDTO(nomeProcurador,dataInicio,dataVencimento,diasParaVencer,status);
     }
-
 
 
 }

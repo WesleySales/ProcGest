@@ -81,4 +81,6 @@ public class Procuracao {
     public void setDataVencimento(LocalDate dataVencimento) {
         this.dataVencimento = dataVencimento;
     }
+
+
 }
