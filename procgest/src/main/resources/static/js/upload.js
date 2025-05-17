@@ -1,40 +1,31 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const dropZone = document.getElementById("drop-zone");
-    const fileInput = document.getElementById("file-input");
-    const dropText = document.getElementById("drop-text");
+document.getElementById("upload-btn").addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    const token = localStorage.getItem("token");
 
-    function mostrarArquivoSelecionado(arquivo) {
-        if (arquivo) {
-            dropText.textContent = `Arquivo selecionado: ${arquivo.name}`;
-            dropZone.style.borderColor = "#4CAF50"; // verde
-        }
+    if (!file) {
+        alert("Selecione um arquivo antes de enviar.");
+        return;
     }
 
-    dropZone.addEventListener("click", () => fileInput.click());
+    const formData = new FormData();
+    formData.append("file", file); // "file" deve ser o mesmo nome aceito no seu controller
 
-    dropZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#333";
-    });
+    try {
+        const response = await fetch("http://localhost:8080/procuracoes/upload", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}` // só o token vai no header, FormData cuida do resto
+            },
+            body: formData
+        });
 
-    dropZone.addEventListener("dragleave", () => {
-        dropZone.style.borderColor = "#999";
-    });
-
-    dropZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#999";
-
-        if (e.dataTransfer.files.length) {
-            fileInput.files = e.dataTransfer.files;
-            mostrarArquivoSelecionado(fileInput.files[0]);
+        if (response.ok) {
+            alert("Upload realizado com sucesso!");
+        } else {
+            alert("Erro ao enviar arquivo: " + response.status);
         }
-    });
-
-    // Detecta quando o arquivo é escolhido manualmente
-    fileInput.addEventListener("change", () => {
-        if (fileInput.files.length) {
-            mostrarArquivoSelecionado(fileInput.files[0]);
-        }
-    });
+    } catch (error) {
+        console.error("Erro na requisição:", error);
+        alert("Erro ao conectar com o servidor.");
+    }
 });

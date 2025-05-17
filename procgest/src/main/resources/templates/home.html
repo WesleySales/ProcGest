@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página Protegida</title>
+</head>
+<body>
+<h2>Bem-vindo!</h2>
+<p id="mensagem"></p>
+
+<button id="carregarDados">Carregar Procuracoes</button>
+<button onclick="logout()">Logout</button>
+
+<script>
+    // Verifica se o token existe
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Sessão expirada ou não autenticada. Redirecionando para login...');
+        window.location.href = '/login.html'; // redireciona se não houver token
+    } else{
+        alert('Tem token sim pai')
+    }
+
+    document.getElementById('carregarDados').addEventListener('click', async () => {
+        try {
+            const response = await fetch('http://localhost:8080/procuracoes', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('mensagem').innerText = JSON.stringify(data);
+            } else {
+                alert('Acesso negado. Faça login novamente.');
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+        }
+    });
+
+    // Função de logout
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+    }
+</script>
+</body>
+</html>

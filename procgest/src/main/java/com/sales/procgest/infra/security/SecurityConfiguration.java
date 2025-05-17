@@ -29,11 +29,16 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,"/procuracoes/upload").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/procuracoes/upload-multiplos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/procuracoes/{id}/attStatus").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/procuracoes/estatisticas").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/procuracoes/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/procuracoes/{id}/attStatus").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/procuracoes/estatisticas").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET,"/procuracoes/{id}").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/procuracoes").authenticated()
 
-                        .requestMatchers("/auth/**").permitAll()
+
+                        .requestMatchers("procuracao/form").authenticated()
+
+                        .requestMatchers("/usuarios/*").permitAll()
+                        .requestMatchers("/auth/*").permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

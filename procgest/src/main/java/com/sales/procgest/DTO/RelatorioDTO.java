@@ -9,8 +9,8 @@ public record RelatorioDTO(
         String titulo,
         String descricao,
 
-        @JsonProperty(value = "Número Total de Procurações")
-        int totalProcuracoes,
+        @JsonProperty(value = "Estatisticas")
+        EstatisticasDTO estatisticasDTO,
 
         @JsonProperty("Lista de Procurações")
         List<ProcuracaoDTO> listaDeProcuracoes
@@ -29,8 +29,8 @@ public record RelatorioDTO(
     }
 
     @Override
-    public int totalProcuracoes() {
-        return totalProcuracoes;
+    public EstatisticasDTO estatisticasDTO() {
+        return estatisticasDTO;
     }
 
     @Override

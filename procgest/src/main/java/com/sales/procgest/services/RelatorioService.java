@@ -22,12 +22,14 @@ public class RelatorioService {
     private ProcuracaoService procuracaoService;
 
     public RelatorioDTO gerarRelatorioGeral(){
-        List<ProcuracaoDTO> lista = procuracaoService.listarProcuracoesPendentes();
+
+        var estatisticas = procuracaoService.buscarEstatisticas();
+
+        List<ProcuracaoDTO> lista = procuracaoService.listarProcuracoes();
         String titulo = "RELATÓRIO GERAL DE PROCURAÇÕES";
         String desc = "Exibindo relatório geral de procurações da mais proxima do vencimento para menos proxima";
-        int numeroProcuracoes = lista.size();
 
-        RelatorioDTO relatorioDTO = new RelatorioDTO(titulo,desc,numeroProcuracoes,lista);
+        RelatorioDTO relatorioDTO = new RelatorioDTO(titulo,desc,estatisticas,lista);
         return relatorioDTO;
     }
 
