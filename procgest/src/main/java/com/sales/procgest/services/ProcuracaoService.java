@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -81,6 +82,30 @@ public class ProcuracaoService {
         return listaDTO.stream()
                 .sorted(Comparator.comparing(ProcuracaoDTO::diasParaVencer))
                 .collect(Collectors.toList());
+    }
+
+    //Funcao para buscar a procuração por ID, caso exista
+    public Procuracao buscarPorId(Long id){
+        Optional<Procuracao> procuracaoOptional = procuracaoRepository.findById(id);
+        if(procuracaoOptional.isEmpty()) return null;
+        var procuracao = procuracaoOptional.get();
+        procuracao.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), procuracao.getDataVencimento()));
+        return procuracao;
+    }
+
+    public void salvarProcuracao(Procuracao procuracao){
+        procuracaoRepository.save(procuracao);
+    }
+
+    public Procuracao atualizarStatusProcuracao(Procuracao procuracao, String status){
+        procuracao.setStatus(StatusProcuracao.valueOf(status.toUpperCase()));
+        atualizarDiasParaVencer(procuracao);
+        salvarProcuracao(procuracao);
+        return procuracao;
+    }
+
+    private void atualizarDiasParaVencer(Procuracao proc){
+        proc.setDiasParaVencer(ChronoUnit.DAYS.between(LocalDate.now(), proc.getDataVencimento()));
     }
 
     public List<ProcuracaoDTO> listarProcuracoes(){
