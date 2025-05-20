@@ -29,10 +29,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,"/procuracoes/upload").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/procuracoes/upload-multiplos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/procuracoes/{id}/attStatus").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/procuracoes/{id}/attStatus").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/procuracoes/estatisticas").hasRole("USER")
                         .requestMatchers(HttpMethod.GET,"/procuracoes/{id}").authenticated()
                         .requestMatchers(HttpMethod.GET,"/procuracoes").authenticated()
+
+                        .requestMatchers("/h2-console/*").permitAll()
 
                         .requestMatchers("procuracao/form").authenticated()
 

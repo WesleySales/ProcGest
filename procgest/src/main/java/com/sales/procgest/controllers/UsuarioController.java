@@ -10,10 +10,10 @@ import com.sales.procgest.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.BadCredentialsException;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +33,7 @@ public class UsuarioController {
             usuarioService.cadastrarUsuario(data);
             return ResponseEntity.status(201).body("Usuário cadastrado com sucesso!");
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Erro ao cadastrar o usuário. Tente novamente.");
+            return ResponseEntity.internalServerError().body("Erro ao cadastrar o usuário:"+e.getMessage());
         }
     }
 
