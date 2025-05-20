@@ -10,7 +10,7 @@ import com.sales.procgest.services.RelatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,7 +85,7 @@ public class ProcuracaoController {
 //                ResponseEntity.ok(procuracao);
 //    }
 
-    @PostMapping(value = "/{id}/attStatus")
+    @PatchMapping(value = "/{id}/attStatus")
     public ResponseEntity<?> atualizarStatus(@PathVariable Long id, @RequestBody ProcuracaoDTO data){
         try{
             var proc = procuracaoService.buscarPorId(id);

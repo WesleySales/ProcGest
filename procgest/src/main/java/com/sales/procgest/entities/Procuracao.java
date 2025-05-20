@@ -21,6 +21,7 @@ public class Procuracao {
     private Long diasParaVencer;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private StatusProcuracao status;
 
     public Procuracao(){
