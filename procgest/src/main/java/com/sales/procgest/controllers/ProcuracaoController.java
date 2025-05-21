@@ -7,6 +7,7 @@ import com.sales.procgest.repositories.ProcuracaoRepository;
 import com.sales.procgest.services.EmailService;
 import com.sales.procgest.services.ProcuracaoService;
 import com.sales.procgest.services.RelatorioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:63342")
 @RestController
 @RequestMapping(value = "/procuracoes")
 public class ProcuracaoController {
@@ -33,6 +35,14 @@ public class ProcuracaoController {
     @Autowired
     private EmailService emailService;
 
+
+    @PostMapping("/cadastrar")
+    public ResponseEntity<?> cadastrarProcuracao(@RequestBody @Valid ProcuracaoDTO data){
+        procuracaoService.cadastrarProcuracao(data);
+        return ResponseEntity.status(201).body("A procuração foi cadastrada com sucesso");
+    }
+
+//    @CrossOrigin(origins = "http://localhost:63342")
     @PostMapping("/upload")
     public ResponseEntity<?> uploadMultiplosPdfs(@RequestParam("files") MultipartFile[] files) throws IOException {
         List<Procuracao> procuracoes = procuracaoService.processarVariosPdfs(files);
@@ -44,6 +54,8 @@ public class ProcuracaoController {
         return ResponseEntity.status(201).body("Procurações cadastradas com sucesso!");
     }
 
+
+
     @GetMapping("/estatisticas")
     public ResponseEntity<EstatisticasDTO> exibirEstatisticas(){
         var estatisticas = procuracaoService.buscarEstatisticas();
@@ -52,9 +64,10 @@ public class ProcuracaoController {
 
     @GetMapping
     public ResponseEntity<?> exibirProcuracoes(){
-        return ResponseEntity.ok().body(relatorioService.gerarRelatorioGeral());
+        return ResponseEntity.ok().body(procuracaoService.listarProcuracoes());
     }
 
+//
 //    @PostMapping("/testePDF")
 //    public ResponseEntity<?> testePdfEmail() {
 //        List<ProcuracaoDTO> lista = procuracaoService.gerarRelatorioVencimento(30l);

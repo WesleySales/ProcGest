@@ -28,6 +28,14 @@ public class Procuracao {
 
     }
 
+    public Procuracao(String nomeProcurador, LocalDate dataInicio, LocalDate dataVencimento, Long diasParaVencer, StatusProcuracao status) {
+        this.nomeProcurador = nomeProcurador;
+        this.dataInicio = dataInicio;
+        this.dataVencimento = dataVencimento;
+        this.diasParaVencer = diasParaVencer;
+        this.status = status;
+    }
+
     public Procuracao(String nomeProcurador, LocalDate dataInicio, LocalDate dataVencimento) {
         this.nomeProcurador = nomeProcurador;
         this.dataInicio = dataInicio;

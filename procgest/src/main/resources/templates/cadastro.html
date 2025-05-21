@@ -1,49 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br">
 <head>
     <title>Cadastro de Procuração</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-<h1>Cadastro de Procuração</h1>
+<div class="container">
+    <aside class="sidebar" id="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <h2>PROCGEST</h2>
+        <ul>
+            <li><a href="#" onclick="navegar('home')" class="ativo">🏠 <span class="texto">Home</span></a></li>
+            <li><a href="home.html" onclick="navegar('home')">📄 <span class="texto">Procurações</span></a></li>
+            <li><a href="cadastro.html" onclick="navegar('cadastrar')">➕ <span class="texto">Cadastrar Procuração</span></a></li>
+            <li><a href="perfil.html" onclick="navegar('perfil')">👤 <span class="texto">Perfil</span></a></li>
+        </ul>
+    </aside>
 
-<!-- Formulário principal de cadastro -->
-<form th:action="@{/procuracao/form}" th:object="${procuracao}" method="post">
-    <label>Nome do Procurador:</label>
-    <input type="text" th:field="*{nomeProcurador}" required><br>
+    <main class="conteudo">
+        <div class="conteudo-interno">
+            <h1>Lista de Procurações</h1>
+            <p>Olá! Confira aqui as procurações cadastradas no sistema.</p>
 
-    <label>Data de Início:</label>
-    <input type="date" th:field="*{dataInicio}" required><br>
+            <form id="upload-form">
+                <div id="drop-zone">
+                    <p>Arraste arquivos aqui ou clique para selecionar</p>
+                    <input type="file" id="file-input" multiple>
+                    <p id="drop-text">Nenhum arquivo selecionado</p>
+                </div>
+                <button type="submit">Enviar Arquivos</button>
+            </form>
 
-    <label>Data de Vencimento:</label>
-    <input type="date" th:field="*{dataVencimento}" required><br>
+            <form id="formCadastroProcuracao">
+                <label for="nomeProcurador">Nome do Procurador:</label>
+                <input type="text" id="nomeProcurador" required>
 
-    <label>Status:</label>
-    <select th:field="*{status}">
-        <option value="PENDENTE">Pendente</option>
-        <option value="CONCLUIDO">Concluído</option>
-        <option value="EXPIRADO">Expirado</option>
-    </select><br><br>
+                <div class="linha-formulario">
+                    <div class="campo-formulario">
+                        <label for="dataInicio">Data de Início:</label>
+                        <input type="date" id="dataInicio" required>
+                    </div>
 
-    <button type="submit">Cadastrar</button>
-</form>
+                    <div class="campo-formulario">
+                        <label for="dataVencimento">Data de Vencimento:</label>
+                        <input type="date" id="dataVencimento" required>
+                    </div>
 
-<!-- Exibição de mensagens -->
-<div th:if="${mensagem}">
-    <p th:text="${mensagem}"></p>
+                    <div class="campo-formulario">
+                        <label for="boxStatus">Status:</label>
+                        <select id="boxStatus">
+                            <option value="PENDENTE" selected>Pendente</option>
+                            <option value="ATIVO">Ativo</option>
+                            <option value="VENCIDO">Vencido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit">Cadastrar Procuração</button>
+            </form>
+
+        </div>
+    </main>
 </div>
 
-<!-- Formulário de upload de múltiplos PDFs -->
-<form method="POST" enctype="multipart/form-data" th:action="@{/procuracao/upload}">
-    <div id="drop-zone" style="border: 2px dashed #999; padding: 30px; text-align: center;">
-        <p id="drop-text">Arraste os PDFs aqui ou clique para selecionar</p>
-        <input type="file" name="files" id="file-input" accept="application/pdf" multiple style="display: none;" />
-    </div>
-    <button type="submit">Enviar</button>
-</form>
 
-<script src="/js/upload.js"></script>
+<script src="../static/js/upload.js"></script>
 
 </body>
 </html>

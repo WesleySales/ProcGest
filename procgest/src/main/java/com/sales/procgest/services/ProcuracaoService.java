@@ -98,6 +98,12 @@ public class ProcuracaoService {
         return procuracoes;
     }
 
+    public void cadastrarProcuracao(ProcuracaoDTO data){
+        var procuracao = getProcuracao(data);
+        procuracaoRepository.save(procuracao);
+        System.out.println("A procuração foi salva pela funcao cadastrar procuracao!");
+    }
+
     //conferir se é um arquivo pdf
     private boolean isPdf(MultipartFile file) {
         return !file.getOriginalFilename().endsWith(".pdf");
@@ -210,6 +216,17 @@ public class ProcuracaoService {
         String status = procuracao.getStatus().name();
 
         return new ProcuracaoDTO(nomeProcurador,dataInicio,dataVencimento,diasParaVencer,status);
+    }
+
+    //Funcao para converter DTO em Procuracao
+    public Procuracao getProcuracao( ProcuracaoDTO data){
+        String nomeProcurador = data.nomeProcurador();
+        LocalDate dataInicio = LocalDate.parse(data.dataInicio());
+        LocalDate dataVencimento= LocalDate.parse(data.dataVencimento());
+        Long diasParaVencer = ChronoUnit.DAYS.between(LocalDate.now(), dataVencimento);
+        String status = data.status();
+
+        return new Procuracao(nomeProcurador,dataInicio,dataVencimento,diasParaVencer,StatusProcuracao.valueOf(status));
     }
 
 

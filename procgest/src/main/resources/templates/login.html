@@ -3,56 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/login.css">
+
     <title>Login - Procuracoes</title>
+
 </head>
 <body>
-<h2>BEM VINDO AO PROCGEST</h2>
-<h3>O melhor gestor de procurações do mercado</h3>
-<form id="loginForm">
-    <label for="login">Login</label><br>
-    <input type="text" id="login" name="login" required><br><br>
+<!--<h2>BEM VINDO AO PROCGEST</h2>-->
+<!--<h3>O melhor gestor de procurações do mercado</h3>-->
 
-    <label for="senha">Senha</label><br>
-    <input type="password" id="senha" name="senha" required><br><br>
-
-    <button type="submit">ENTRAR</button>
-</form>
+<div class="container-login">
+    <div class="form">
+        <form id="loginForm">
+            <div class="form-header">
+                <div class="titulo">
+                    <h2>BEM VINDO AO PROCGEST</h2>
+                    <h4>O melhor gestor de procurações do mercado</h4>
+                </div>
+            </div>
+            <div class="input-grupo">
+                <div class="row-input">
+                    <label for="login">Login</label>
+                    <input type="text" id="login" name="login" placeholder="Digite seu login" required>
+                </div>
+                <div class="row-input">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" placeholder="Informe a senha" required>
+                </div>
+            </div>
+            <div class="button-entrar">
+                <button id="btnEntrar" type="submit">
+                    <i class="fa-solid fa-right-to-bracket"></i> ENTRAR
+                </button>
+            </div>
+            <span><a href="#">Esqueci a Senha</a></span>
+            <div class="separador">
+                <span>ou</span>
+            </div>
+            <div class="button-cadastrar">
+                <button type="button"><i class="fa-solid fa-user-plus"></i> Cadastre-se</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <p id="mensagem"></p>
 
-<script>
-    const form = document.getElementById('loginForm');
-    const mensagem = document.getElementById('mensagem');
+<!--<script src="../static/js/login.js"></script>-->
+<script src="../static/js/login.js"></script>
 
-    form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const login = document.getElementById('login').value;
-    const senha = document.getElementById('senha').value;
-
-    try {
-        const response = await fetch('http://localhost:8080/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ login, senha }) // nomes compatíveis com UsuarioDTO
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem("token", data.token);
-            alert("Deu certo o login. token: "+data.token)
-            mensagem.textContent = localStorage.getItem('token');
-            // redirecionar para outra página
-            window.location.href = "/procuracao/form"; // ajuste o nome conforme seu arquivo HTML
-        } else {
-            alert("Login inválido");
-        }
-
-        } catch (error) {
-            console.error(error);
-            mensagem.textContent = "Erro ao conectar com o servidor.";
-        }
-    });
-</script>
 </body>
 </html>
