@@ -31,7 +31,7 @@
                 const data = await response.json();
                 const token = data.token;
 
-//                localStorage.setItem("token", token);
+                localStorage.setItem("token", token);
 //                alert("Login realizado com sucesso. Token: " + token);
 
 //                if (mensagem) {

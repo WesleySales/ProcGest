@@ -36,6 +36,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/procuracoes/estatisticas").hasRole("USER")
                         .requestMatchers(HttpMethod.GET,"/procuracoes/{id}").authenticated()
                         .requestMatchers(HttpMethod.GET,"/procuracoes").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/auth/carregarDadosUsuario").authenticated()
 
                         .requestMatchers("/h2-console/*").permitAll()
 
