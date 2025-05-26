@@ -178,17 +178,21 @@
 <div class="container">
     <aside class="sidebar" id="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-        <h2>PROCGEST</h2>
+        <h2 id="nomeSistema">PROCGEST</h2>
         <ul>
             <li><a href="#" onclick="navegar('home')">🏠 <span class="texto">Home</span></a></li>
             <li><a href="home.html" onclick="navegar('home')">📄 <span class="texto">Procurações</span></a></li>
             <li><a href="cadastro.html" onclick="navegar('cadastrar')">➕ <span class="texto">Cadastrar Procuração</span></a></li>
             <li><a href="perfil.html" onclick="navegar('perfil')">👤 <span class="texto">Perfil</span></a></li>
-        </ul>
+            <li><a href="login.html" onclick="encerrarSessao()">👤 <span class="texto">ENCERRAR SESSAO</span></a></li>
+        </ul >
     </aside>
 
     <main class="conteudo">
         <h1>Painel Principal ProcGest</h1>
+        <div id="perfilUsuario">
+            <h3 id="nomeUsuario">NOME DE USUARIO AQUI</h3>
+        </div>
 
         <div id="cardsEstatisticas" class="estatisticas-container">
             <div id="procuracoesGeral" class="card">
