@@ -184,7 +184,7 @@
             <li><a href="home.html" onclick="navegar('home')">📄 <span class="texto">Procurações</span></a></li>
             <li><a href="cadastro.html" onclick="navegar('cadastrar')">➕ <span class="texto">Cadastrar Procuração</span></a></li>
             <li><a href="perfil.html" onclick="navegar('perfil')">👤 <span class="texto">Perfil</span></a></li>
-            <li><a href="login.html" onclick="encerrarSessao()">👤 <span class="texto">ENCERRAR SESSAO</span></a></li>
+            <li><a href="" onclick="encerrarSessao()">👤 <span class="texto">ENCERRAR SESSAO</span></a></li>
         </ul >
     </aside>
 
@@ -213,6 +213,9 @@
             </div>
         </div>
 
+        <div class="filtrosProcuracoes">
+            <input type="text" class="form-control" placeholder="Digite o nome do procurador ou código da procuração" aria-label="Recipient's username" aria-describedby="button-addon2">
+        </div>
         <table id="tabela-procuracoes">
             <thead>
             <tr>

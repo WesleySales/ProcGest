@@ -13,6 +13,9 @@ public class Procuracao {
     @JsonIgnore
     private Long id;
 
+//    @Column(name = "codigo_procuracao")
+//    private String codigo;
+
     private String nomeProcurador;
     private LocalDate dataInicio;
     private LocalDate dataVencimento;

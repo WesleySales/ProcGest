@@ -1,8 +1,6 @@
 const token = localStorage.getItem("token");
 
 async function verificarUsuarioLogado() {
-    const token = localStorage.getItem("token");
-
     if (!token) {
         alert("Usuário não autenticado.\nREDIRECIONANDO PARA PÁGINA DE LOGIN...");
         window.location.href = "login.html";
@@ -10,7 +8,7 @@ async function verificarUsuarioLogado() {
     }
     return true;
 }
-
+//document.addEventListener('DOMContentLoaded', verificarUsuarioLogado);
 async function carregarEstatisticas(){
         try{
             const response = await fetch('http://localhost:8080/procuracoes/estatisticas', {
@@ -61,6 +59,8 @@ async function carregarProcuracoes() {
                     <td>${proc.status || "-"}</td>
                     <td>${proc.dataInicio || "-"}</td>
                     <td>${proc.dataVencimento || "-"}</td>
+                    <td>EDITAR</td>
+                    <td>DELETAR</td>
                 `;
                 tabelaBody.appendChild(linha);
             });
@@ -126,6 +126,7 @@ async function inicializarPagina() {
 }
 
 document.addEventListener('DOMContentLoaded', inicializarPagina);
+//document.addEventListener('DOMContentLoaded', verificarUsuarioLogado);
 
 
 
