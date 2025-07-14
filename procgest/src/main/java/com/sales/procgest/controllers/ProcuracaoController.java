@@ -63,9 +63,32 @@ public class ProcuracaoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> exibirProcuracoes(){
-        return ResponseEntity.ok().body(procuracaoService.listarProcuracoes());
+    public ResponseEntity<?> exibirProcuracoes(
+            @RequestParam(required = false) String nomeDoProcurador,
+            @RequestParam(required = false) Long id) {
+
+        if (id != null) {
+            try{
+                var proc = procuracaoService.buscarPorId(id);
+                if(proc == null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
+                return ResponseEntity.ok().body(proc);
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError()
+                        .body("Error: " + e.getMessage());
+            }
+
+        } else if (nomeDoProcurador != null && !nomeDoProcurador.isEmpty()) {
+            List<?> procuracao = procuracaoRepository.findByNomeProcurador(nomeDoProcurador);
+
+            return procuracao.isEmpty()?
+                    ResponseEntity.badRequest().body("Nenhuma procuração em nome de "+nomeDoProcurador):
+                    ResponseEntity.ok(procuracao);
+        } else {
+            return ResponseEntity.ok().body(procuracaoService.listarProcuracoes());
+        }
     }
+
+
 
 //
 //    @PostMapping("/testePDF")
@@ -77,17 +100,17 @@ public class ProcuracaoController {
 //        return ResponseEntity.ok().body("Email enviado com sucesso");
 //    }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<?> buscarProcuracaoPorId(@PathVariable Long id) {
-        try{
-            var proc = procuracaoService.buscarPorId(id);
-            if(proc == null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
-            return ResponseEntity.ok().body(proc);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Error: " + e.getMessage());
-        }
-    }
+//    @GetMapping(value = "/{id}")
+//    public ResponseEntity<?> buscarProcuracaoPorId(@PathVariable Long id) {
+//        try{
+//            var proc = procuracaoService.buscarPorId(id);
+//            if(proc == null) return ResponseEntity.status(404).body("Procuração não encontrada, confira o ID passado!");
+//            return ResponseEntity.ok().body(proc);
+//        } catch (Exception e) {
+//            return ResponseEntity.internalServerError()
+//                    .body("Error: " + e.getMessage());
+//        }
+//    }
 
 //    @GetMapping
 //    public ResponseEntity<?> buscarPorNomeProcurador(@RequestParam String nome){

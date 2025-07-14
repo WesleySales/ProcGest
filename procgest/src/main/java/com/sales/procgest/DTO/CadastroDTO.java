@@ -2,7 +2,15 @@ package com.sales.procgest.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDate;
+
 public record CadastroDTO (
+
+//        String nomeCompleto,
+//        String email,
+//        String telefone,
+//        String cpf,
+//        LocalDate dataNascimento,
 
         @NotBlank(message = "O login deve ser preenchido!")
         String login,

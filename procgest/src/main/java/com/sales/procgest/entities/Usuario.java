@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,9 +20,17 @@ public class Usuario implements UserDetails {
     private String login;
     private String senha;
 
+//    private String nomeCompleto;
+//    private String email;
+//    private String telefone;
+//    private String cpf;
+//    private LocalDate dataNascimento;
+
     @Enumerated(EnumType.STRING)
     private TipoUsuario role;
 
+//    @Enumerated(EnumType.STRING)
+//    private StatusUsuario status;
 
     public Usuario() {
     }

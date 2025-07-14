@@ -16,7 +16,7 @@
         const login = document.getElementById('login')?.value;
         const senha = document.getElementById('senha')?.value;
 
-        verificarCampos();
+//        verificarCampos();
 
         try {
             const response = await fetch('http://localhost:8080/auth/login', {
@@ -32,14 +32,6 @@
                 const token = data.token;
 
                 localStorage.setItem("token", token);
-//                alert("Login realizado com sucesso. Token: " + token);
-
-//                if (mensagem) {
-//                    mensagem.textContent = token;
-//                }
-
-//                alert("Redirecionando...");
-//                 redireciona para outra página
                 window.location.href = "home.html";
             } else {
                 alert("Login inválido. Verifique suas credenciais.");
@@ -54,9 +46,9 @@
     });
 //});
 
-    function verificarCampos(){
-        if (!login || !senha) {
-            alert("Preencha todos os campos.");
-            return;
-        }
-    }
+//    function verificarCampos(){
+//        if (!login || !senha) {
+//            alert("Preencha todos os campos.");
+//            return;
+//        }
+//    }
