@@ -30,9 +30,5 @@ public class ProcgestApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-//
-//		List<?> procuracao = procuracaoRepository.findByNomeProcurador("Daniel Souza");
-//		System.out.println("As procurações de Daniel Souza: \n"+procuracao);
 	}
-
 }
