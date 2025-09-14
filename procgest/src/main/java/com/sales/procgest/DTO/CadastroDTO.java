@@ -21,4 +21,6 @@ public record CadastroDTO (
         @NotBlank(message = "A role do usuário deve ser preenchida")
         String role
 ) {
+        public CadastroDTO {
+        }
 }
