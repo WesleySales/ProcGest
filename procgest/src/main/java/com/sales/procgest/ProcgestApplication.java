@@ -1,9 +1,13 @@
 package com.sales.procgest;
 
+import com.sales.procgest.DTO.CadastroDTO;
 import com.sales.procgest.DTO.ProcuracaoDTO;
+import com.sales.procgest.DTO.UsuarioDTO;
+import com.sales.procgest.entities.Usuario;
 import com.sales.procgest.repositories.ProcuracaoRepository;
 import com.sales.procgest.services.EmailService;
 import com.sales.procgest.services.ProcuracaoService;
+import com.sales.procgest.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,13 +19,8 @@ import java.util.List;
 public class ProcgestApplication implements CommandLineRunner {
 
 	@Autowired
-	private EmailService emailService;
+	private UsuarioService usuarioService;
 
-	@Autowired
-	private ProcuracaoService procuracaoService;
-
-	@Autowired
-	private ProcuracaoRepository procuracaoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProcgestApplication.class, args);
@@ -30,9 +29,10 @@ public class ProcgestApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-//
-//		List<?> procuracao = procuracaoRepository.findByNomeProcurador("Daniel Souza");
-//		System.out.println("As procurações de Daniel Souza: \n"+procuracao);
-	}
 
+//		CadastroDTO data = new CadastroDTO("Wesley","sales8080","ADMIN");
+//
+//		usuarioService.cadastrarUsuario(data);
+
+	}
 }

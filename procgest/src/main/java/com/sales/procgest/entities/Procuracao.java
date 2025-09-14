@@ -6,12 +6,16 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table (name = "procuracoes")
 public class Procuracao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+
+//    @Column(name = "codigo_procuracao")
+//    private String codigo;
 
     private String nomeProcurador;
     private LocalDate dataInicio;
@@ -21,7 +25,7 @@ public class Procuracao {
     private Long diasParaVencer;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column(name = "status_procuracao", length = 20)
     private StatusProcuracao status;
 
     public Procuracao(){

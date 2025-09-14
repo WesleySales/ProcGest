@@ -1,11 +1,28 @@
-document.addEventListener("DOMContentLoaded", function () {
+const token = localStorage.getItem("token");
+
+async function verificarUsuarioLogado() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Usuário não autenticado.\nREDIRECIONANDO PARA PÁGINA DE LOGIN...");
+        window.location.href = "login.html";
+        return false;
+    }
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', verificarUsuarioLogado);
+
+
+//document.addEventListener("DOMContentLoaded", function () {
+
+
     // Elementos da página
     const dropZone = document.getElementById("drop-zone");
     const fileInput = document.getElementById("file-input");
     const dropText = document.getElementById("drop-text");
     const formUpload = document.getElementById("upload-form");
     const formCadastroProcuracao = document.getElementById('formCadastroProcuracao');
-    const token = localStorage.getItem("token");
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.querySelector('.toggle-btn');
 
@@ -177,4 +194,3 @@ document.addEventListener("DOMContentLoaded", function () {
     // Torna as funções acessíveis globalmente
     window.toggleSidebar = toggleSidebar;
     window.navegar = navegar;
-});
